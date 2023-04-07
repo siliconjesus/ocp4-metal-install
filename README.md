@@ -153,7 +153,7 @@
    export KUBE_EDITOR="vim"
    ```
 
-1. Set a Static IP for OCP network interface `nmtui-edit ens19` or edit `/etc/sysconfig/network-scripts/ifcfg-ens224`
+1. Set a Static IP for OCP network interface `nmtui-edit ens19` or edit `/etc/sysconfig/network-scripts/ifcfg-ens19`
 
    - **Address**: 10.6.66.1
    - **DNS Server**: 127.0.0.1
@@ -161,7 +161,7 @@
    - Never use this network for default route
    - Automatically connect
 
-   > If changes arent applied automatically you can bounce the NIC with `nmcli connection down ens224` and `nmcli connection up ens224`
+   > If changes arent applied automatically you can bounce the NIC with `nmcli connection down ens19` and `nmcli connection up ens19`
 
 1. Setup firewalld
 
@@ -180,7 +180,7 @@
 
    Set masquerading (source-nat) on the both zones.
 
-   So to give a quick example of source-nat - for packets leaving the external interface, which in this case is ens18 - after they have been routed they will have their source address altered to the interface address of ens192 so that return packets can find their way back to this interface where the reverse will happen.
+   So to give a quick example of source-nat - for packets leaving the external interface, which in this case is ens18 - after they have been routed they will have their source address altered to the interface address of ens18 so that return packets can find their way back to this interface where the reverse will happen.
 
    ```bash
    firewall-cmd --zone=external --add-masquerade --permanent
