@@ -11,31 +11,31 @@ $TTL    604800
 ocp-svc.ocp.mentzell.us.          IN      A       10.6.66.1
 
 ; Temp Bootstrap Node
-ocp-bootstrap.lab.ocp.mentzell.us.        IN      A      10.6.66.200
+ocp-bootstrap.ocp.mentzell.us.        IN      A      10.6.66.200
 
 ; Control Plane Nodes
-ocp-cp-1.lab.ocp.mentzell.us.         IN      A      10.6.66.201
-ocp-cp-2.lab.ocp.mentzell.us.         IN      A      10.6.66.202
-ocp-cp-3.lab.ocp.mentzell.us.         IN      A      10.6.66.203
+ocp-cp-1.ocp.mentzell.us.         IN      A      10.6.66.201
+ocp-cp-2.ocp.mentzell.us.         IN      A      10.6.66.202
+ocp-cp-3.ocp.mentzell.us.         IN      A      10.6.66.203
 
 ; Worker Nodes
-ocp-w-1.lab.ocp.mentzell.us.        IN      A      10.6.66.211
-ocp-w-2.lab.ocp.mentzell.us.        IN      A      10.6.66.212
+ocp-w-1.ocp.mentzell.us.        IN      A      10.6.66.211
+ocp-w-2.ocp.mentzell.us.        IN      A      10.6.66.212
 
 ; OpenShift Internal - Load balancer
-api.lab.ocp.mentzell.us.        IN    A    10.6.66.1
-api-int.lab.ocp.mentzell.us.    IN    A    10.6.66.1
-*.apps.lab.ocp.mentzell.us.     IN    A    10.6.66.1
+api.ocp.mentzell.us.        IN    A    10.6.66.1
+api-int.ocp.mentzell.us.    IN    A    10.6.66.1
+*.apps.ocp.mentzell.us.     IN    A    10.6.66.1
 
 ; ETCD Cluster
-etcd-0.lab.ocp.mentzell.us.    IN    A     10.6.66.201
-etcd-1.lab.ocp.mentzell.us.    IN    A     10.6.66.202
-etcd-2.lab.ocp.mentzell.us.    IN    A     10.6.66.203
+etcd-0.ocp.mentzell.us.    IN    A     10.6.66.201
+etcd-1.ocp.mentzell.us.    IN    A     10.6.66.202
+etcd-2.ocp.mentzell.us.    IN    A     10.6.66.203
 
 ; OpenShift Internal SRV records (cluster name = lab)
-_etcd-server-ssl._tcp.lab.ocp.mentzell.us.    86400     IN    SRV     0    10    2380    etcd-0.lab
-_etcd-server-ssl._tcp.lab.ocp.mentzell.us.    86400     IN    SRV     0    10    2380    etcd-1.lab
-_etcd-server-ssl._tcp.lab.ocp.mentzell.us.    86400     IN    SRV     0    10    2380    etcd-2.lab
+_etcd-server-ssl._tcp.ocp.mentzell.us.    86400     IN    SRV     0    10    2380    etcd-0.lab
+_etcd-server-ssl._tcp.ocp.mentzell.us.    86400     IN    SRV     0    10    2380    etcd-1.lab
+_etcd-server-ssl._tcp.ocp.mentzell.us.    86400     IN    SRV     0    10    2380    etcd-2.lab
 
-oauth-openshift.apps.lab.ocp.mentzell.us.     IN     A     10.6.66.1
-console-openshift-console.apps.lab.ocp.mentzell.us.     IN     A     10.6.66.1
+oauth-openshift.apps.ocp.mentzell.us.     IN     A     10.6.66.1
+console-openshift-console.apps.ocp.mentzell.us.     IN     A     10.6.66.1
