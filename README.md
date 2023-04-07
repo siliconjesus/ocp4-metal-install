@@ -153,7 +153,7 @@
    export KUBE_EDITOR="vim"
    ```
 
-1. Set a Static IP for OCP network interface `nmtui-edit ens224` or edit `/etc/sysconfig/network-scripts/ifcfg-ens224`
+1. Set a Static IP for OCP network interface `nmtui-edit ens19` or edit `/etc/sysconfig/network-scripts/ifcfg-ens224`
 
    - **Address**: 10.6.66.1
    - **DNS Server**: 127.0.0.1
@@ -168,8 +168,8 @@
    Create **internal** and **external** zones
 
    ```bash
-   nmcli connection modify ens224 connection.zone internal
-   nmcli connection modify ens192 connection.zone external
+   nmcli connection modify ens19 connection.zone internal
+   nmcli connection modify ens18 connection.zone external
    ```
 
    View zones:
@@ -180,7 +180,7 @@
 
    Set masquerading (source-nat) on the both zones.
 
-   So to give a quick example of source-nat - for packets leaving the external interface, which in this case is ens192 - after they have been routed they will have their source address altered to the interface address of ens192 so that return packets can find their way back to this interface where the reverse will happen.
+   So to give a quick example of source-nat - for packets leaving the external interface, which in this case is ens18 - after they have been routed they will have their source address altered to the interface address of ens192 so that return packets can find their way back to this interface where the reverse will happen.
 
    ```bash
    firewall-cmd --zone=external --add-masquerade --permanent
@@ -240,10 +240,10 @@
 
    > At the moment DNS will still be pointing to the LAN DNS server. You can see this by testing with `dig ocp.lan`.
 
-   Change the LAN nic (ens192) to use 127.0.0.1 for DNS AND ensure `Ignore automatically Obtained DNS parameters` is ticked
+   Change the LAN nic (ens18) to use 127.0.0.1 for DNS AND ensure `Ignore automatically Obtained DNS parameters` is ticked
 
    ```bash
-   nmtui-edit ens192
+   nmtui-edit ens18
    ```
 
    Restart Network Manager
