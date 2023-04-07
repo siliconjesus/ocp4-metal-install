@@ -155,9 +155,9 @@
 
 1. Set a Static IP for OCP network interface `nmtui-edit ens224` or edit `/etc/sysconfig/network-scripts/ifcfg-ens224`
 
-   - **Address**: 192.168.22.1
+   - **Address**: 10.6.66.1
    - **DNS Server**: 127.0.0.1
-   - **Search domain**: ocp.lan
+   - **Search domain**: ocp.mentzell.us
    - Never use this network for default route
    - Automatically connect
 
