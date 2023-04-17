@@ -22,7 +22,7 @@
 
 ## Download Software
 
-1. Download [CentOS 8 x86_64 image](https://www.centos.org/centos-linux/)
+1. Download [RHEL 8 x86_64 image](https://access.redhat.com/downloads/content/479/ver=/rhel---8/8.7/x86_64/product-software)
 1. Login to [RedHat OpenShift Cluster Manager](https://cloud.redhat.com/openshift)
 1. Select 'Create Cluster' from the 'Clusters' navigation menu
 1. Select 'RedHat OpenShift Container Platform'
@@ -38,23 +38,23 @@
 
 ## Prepare the 'Bare Metal' environment
 
-> VMware ESXi used in this guide
+> Proxmox VE 7.2-3 used in this guide
 
-1. Copy the CentOS 8 iso to an ESXi datastore
-1. Create a new Port Group called 'OCP' under Networking
-    - (In case of VirtualBox choose "Internal Network" when creating each VM and give it the same name. ocp for instance)
-    - (In case of ProxMox you may use the same network bridge and choose a specific VLAN tag. 50 for instance) 
+1. Copy the RHEL 8 iso to an Proxmox ISO datastore
+1. Create a new Linux Bridge under Networking for each Proxmox host you wish to participate in the cluster
+   - Assign it to a port if you need the traffic to egress to a switch.
+   - Make sure your switching infrastructure assigns a VLAN to that port to keep the traffic segregated from the rest of your traffic.
 1. Create 3 Control Plane virtual machines with minimum settings:
    - Name: ocp-cp-# (Example ocp-cp-1)
    - 4vcpu
-   - 8GB RAM
+   - 16GB RAM
    - 50GB HDD
    - NIC connected to the OCP network
    - Load the rhcos-X.X.X-x86_64-installer.x86_64.iso image into the CD/DVD drive
 1. Create 2 Worker virtual machines (or more if you want) with minimum settings:
    - Name: ocp-w-# (Example ocp-w-1)
    - 4vcpu
-   - 8GB RAM
+   - 16GB RAM
    - 50GB HDD
    - NIC connected to the OCP network
    - Load the rhcos-X.X.X-x86_64-installer.x86_64.iso image into the CD/DVD drive
@@ -66,37 +66,35 @@
    - NIC connected to the OCP network
    - Load the rhcos-X.X.X-x86_64-installer.x86_64.iso image into the CD/DVD drive
 1. Create a Services virtual machine with minimum settings:
-   - Name: ocp-svc
+   - Name: ocp-helper
    - 4vcpu
    - 4GB RAM
    - 120GB HDD
    - NIC1 connected to the VM Network (LAN)
    - NIC2 connected to the OCP network
-   - Load the CentOS_8.iso image into the CD/DVD drive
-1. Boot all virtual machines so they each are assigned a MAC address
-1. Shut down all virtual machines except for 'ocp-svc'
-1. Use the VMware ESXi dashboard to record the MAC address of each vm, these will be used later to set static IPs
+   - Load the RHEL 8 iso image into the CD/DVD drive
+1. Use the proxmox network detail for each VM to record the MAC address of each vm, these will be used later to set static IPs
 
 ## Configure Environmental Services
 
-1. Install CentOS8 on the ocp-svc host
+1. Install RHEL 8 on the ocp-helper host
 
    - Remove the home dir partition and assign all free storage to '/'
    - Optionally you can install the 'Guest Tools' package to have monitoring and reporting in the VMware ESXi dashboard
-   - Enable the LAN NIC only to obtain a DHCP address from the LAN network and make note of the IP address (ocp-svc_IP_address) assigned to the vm
+   - Enable the LAN NIC only to obtain a DHCP address from the LAN network and make note of the IP address (ocp-helper_IP_address) assigned to the vm
 
-1. Boot the ocp-svc VM
+1. Boot the ocp-helper VM
 
-1. Move the files downloaded from the RedHat Cluster Manager site to the ocp-svc node
+1. Move the files downloaded from the RedHat Cluster Manager site to the ocp-helper node
 
    ```bash
-   scp ~/Downloads/openshift-install-linux.tar.gz ~/Downloads/openshift-client-linux.tar.gz ~/Downloads/rhcos-metal.x86_64.raw.gz root@{ocp-svc_IP_address}:/root/
+   scp ~/Downloads/openshift-install-linux.tar.gz ~/Downloads/openshift-client-linux.tar.gz ~/Downloads/rhcos-metal.x86_64.raw.gz root@{ocp-helper_IP_address}:/root/
    ```
 
-1. SSH to the ocp-svc vm
+1. SSH to the ocp-helper vm
 
    ```bash
-   ssh root@{ocp-svc_IP_address}
+   ssh root@{ocp-helper_IP_address}
    ```
 
 1. Extract Client tools and copy them to `/usr/local/bin`
@@ -340,7 +338,7 @@
 
    Configure the Firewall
 
-   > Note: Opening port 9000 in the external zone allows access to HAProxy stats that are useful for monitoring and troubleshooting. The UI can be accessed at: `http://{ocp-svc_IP_address}:9000/stats`
+   > Note: Opening port 9000 in the external zone allows access to HAProxy stats that are useful for monitoring and troubleshooting. The UI can be accessed at: `http://{ocp-helper_IP_address}:9000/stats`
 
    ```bash
    firewall-cmd --add-port=6443/tcp --zone=internal --permanent # kube-api-server on control plane nodes
@@ -513,7 +511,7 @@
 
 ## Monitor the Bootstrap Process
 
-1. You can monitor the bootstrap process from the ocp-svc host at different log levels (debug, error, info)
+1. You can monitor the bootstrap process from the ocp-helper host at different log levels (debug, error, info)
 
    ```bash
    ~/openshift-install --dir ~/ocp-install wait-for bootstrap-complete --log-level=debug
@@ -548,7 +546,7 @@
 
 ## Join Worker Nodes
 
-1. Setup 'oc' and 'kubectl' clients on the ocp-svc machine
+1. Setup 'oc' and 'kubectl' clients on the ocp-helper machine
 
    ```bash
    export KUBECONFIG=~/ocp-install/auth/kubeconfig
@@ -643,14 +641,14 @@
 1. Append the following to your local workstations `/etc/hosts` file:
 
    > From your local workstation
-   > If you do not want to add an entry for each new service made available on OpenShift you can configure the ocp-svc DNS server to serve externally and create a wildcard entry for \*.apps.lab.ocp.lan
+   > If you do not want to add an entry for each new service made available on OpenShift you can configure the ocp-helper DNS server to serve externally and create a wildcard entry for \*.apps.lab.ocp.lan
 
    ```bash
    # Open the hosts file
    sudo vi /etc/hosts
 
    # Append the following entries:
-   192.168.0.96 ocp-svc api.lab.ocp.lan console-openshift-console.apps.lab.ocp.lan oauth-openshift.apps.lab.ocp.lan downloads-openshift-console.apps.lab.ocp.lan alertmanager-main-openshift-monitoring.apps.lab.ocp.lan grafana-openshift-monitoring.apps.lab.ocp.lan prometheus-k8s-openshift-monitoring.apps.lab.ocp.lan thanos-querier-openshift-monitoring.apps.lab.ocp.lan
+   192.168.0.96 ocp-helper api.lab.ocp.lan console-openshift-console.apps.lab.ocp.lan oauth-openshift.apps.lab.ocp.lan downloads-openshift-console.apps.lab.ocp.lan alertmanager-main-openshift-monitoring.apps.lab.ocp.lan grafana-openshift-monitoring.apps.lab.ocp.lan prometheus-k8s-openshift-monitoring.apps.lab.ocp.lan thanos-querier-openshift-monitoring.apps.lab.ocp.lan
    ```
 
 1. Navigate to the [OpenShift Console URL](https://console-openshift-console.apps.lab.ocp.lan) and log in as the 'admin' user
@@ -660,7 +658,7 @@
 
 ## Troubleshooting
 
-1. You can collect logs from all cluster hosts by running the following command from the 'ocp-svc' host:
+1. You can collect logs from all cluster hosts by running the following command from the 'ocp-helper' host:
 
    ```bash
    ./openshift-install gather bootstrap --dir ocp-install --bootstrap=10.6.66.200 --master=10.6.66.201 --master=10.6.66.202 --master=10.6.66.203
