@@ -677,3 +677,8 @@
    ```bash
    oc edit schedulers.config.openshift.io cluster
    ```
+
+## Other notes:
+Added third worker node, increased ram for all three to 16gb due to out of memory challanges with adding some operators I was playing with.
+
+On proxmox, you need to pass the CPU through as host - the system will throw errors when deploying python code otherwise.  This seems to only really matter for the compute nodes, but for consistency, I added that configuration to all the nodes.

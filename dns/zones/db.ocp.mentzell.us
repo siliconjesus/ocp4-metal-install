@@ -1,6 +1,6 @@
 $TTL    604800
 @       IN      SOA     ocp-svc.ocp.mentzell.us. contact.ocp.mentzell.us (
-                  1     ; Serial
+                  2     ; Serial
              604800     ; Refresh
               86400     ; Retry
             2419200     ; Expire
@@ -21,6 +21,7 @@ ocp-cp-3.ocp.mentzell.us.         IN      A      10.6.66.203
 ; Worker Nodes
 ocp-w-1.ocp.mentzell.us.        IN      A      10.6.66.211
 ocp-w-2.ocp.mentzell.us.        IN      A      10.6.66.212
+ocp-w-3.ocp.mentzell.us.        IN      A      10.6.66.213
 
 ; OpenShift Internal - Load balancer
 api.ocp.mentzell.us.        IN    A    10.6.66.1
