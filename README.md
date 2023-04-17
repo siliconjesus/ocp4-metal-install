@@ -16,6 +16,9 @@
   - [Access the OpenShift Console](#access-the-openshift-console)
   - [Troubleshooting](#troubleshooting)
 
+## Reference Video
+![How to install OpenShift 4 on Bare Metal - User Provisioned Infrastructure](https://www.youtube.com/watch?v=d03xg2PKOPg)
+
 ## Architecture Diagram
 
 ![Architecture Diagram](./diagram/Architecture.png)
